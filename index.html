@@ -54,7 +54,7 @@
       <div class="mb-6"><span class="inline-block bg-gradient-to-r from-teal-400 to-green-400 text-white px-4 py-1 rounded-full text-sm font-medium mb-4"> 🎯 ระบบประเมินผล </span>
       </div>
       <h1 id="program-title" class="text-2xl md:text-4xl font-bold text-gray-800 mb-4 leading-tight">โปรแกรมแสดง และบันทึกคะแนน<br><span class="text-teal-600">กิจกรรม 5ส.</span></h1>
-      <p id="department-name" class="text-xl md:text-2xl text-teal-700 font-semibold mb-8">📁 แผนก SV</p>
+      <p id="department-name" class="text-xl md:text-2xl text-teal-700 font-semibold mb-8">📁 แผนก SM</p>
       <div class="flex flex-wrap justify-center gap-4 mb-8">
        <div class="bg-blue-50 px-4 py-2 rounded-xl"><span class="text-2xl">📋</span>
         <p class="text-sm text-blue-700 font-medium">สะสาง</p>
@@ -83,7 +83,7 @@
         </svg></button>
        <div>
         <h1 class="text-xl font-bold">📊 Dashboard คะแนน 5ส.</h1>
-        <p class="text-teal-100 text-sm">แผนก SV</p>
+        <p class="text-teal-100 text-sm">แผนก SM</p>
        </div>
       </div>
       <div class="flex flex-wrap gap-2"><button onclick="fetchData()" class="bg-white text-teal-700 hover:bg-teal-50 font-semibold py-2 px-4 rounded-xl transition-all flex items-center gap-2 shadow-md"> 🔄 เรียกดูข้อมูลจาก Google Sheet </button> <button onclick="clearLocalStorage()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-xl transition-all flex items-center gap-2 shadow-md"> 🗑️ ล้างข้อมูล Local </button>
@@ -158,7 +158,7 @@
   <script>
     // Default Configuration
     const defaultConfig = {
-      department_name: 'แผนก SV',
+      department_name: 'แผนก SM',
       program_title: 'โปรแกรมแสดง และบันทึกคะแนนกิจกรรม 5ส.',
       primary_color: '#26A69A',
       secondary_color: '#4DB6AC',
@@ -166,10 +166,10 @@
     };
 
     // Google Apps Script URL
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTpxL-Ysbb7QrelcHFiLY0INeOA1wANagWjJH72A5xP1ZYcPtONGkuquFbzspwkSwz/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx4_ZD5lWHC6mqyT5i1B-uJvE_9zMpp4rSdAw0hO7Y4WqHcH-x2C2SNN2c15sNx0KJw/exec';
     
     // Local Storage Key
-    const STORAGE_KEY = '5s_score_data_sv';
+    const STORAGE_KEY = '5s_score_data_sm';
 
     // Initialize Element SDK
     if (window.elementSdk) {
@@ -193,7 +193,6 @@
       });
     }
 
-    // Page Navigation
     function showDashboard() {
       document.getElementById('cover-page').classList.add('hidden');
       document.getElementById('dashboard-page').classList.remove('hidden');
@@ -205,7 +204,6 @@
       document.getElementById('cover-page').classList.remove('hidden');
     }
 
-    // JSONP Callback
     window.handleSheetData = function(data) {
       if (data.error) {
         Swal.fire({
@@ -217,14 +215,12 @@
         return;
       }
       
-      // Save to Local Storage
       const storageData = {
         data: data,
         timestamp: new Date().toISOString()
       };
       localStorage.setItem(STORAGE_KEY, JSON.stringify(storageData));
       
-      // Render data
       renderTable(data);
       updateStats(data);
       updateLastUpdate(new Date());
@@ -240,7 +236,6 @@
       });
     };
 
-    // Fetch Data from Google Sheet
     function fetchData() {
       Swal.fire({
         title: 'กำลังโหลดข้อมูล...',
@@ -252,7 +247,6 @@
         }
       });
 
-      // Create JSONP script
       const script = document.createElement('script');
       script.src = APPS_SCRIPT_URL + '?callback=handleSheetData&t=' + Date.now();
       script.onerror = function() {
@@ -265,7 +259,6 @@
       };
       document.body.appendChild(script);
       
-      // Clean up script after load
       setTimeout(() => {
         if (script.parentNode) {
           script.parentNode.removeChild(script);
@@ -273,7 +266,6 @@
       }, 10000);
     }
 
-    // Load from Local Storage
     function loadFromLocalStorage() {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -289,7 +281,6 @@
       }
     }
 
-    // Clear Local Storage
     function clearLocalStorage() {
       Swal.fire({
         title: 'ยืนยันการล้างข้อมูล?',
@@ -329,7 +320,6 @@
       });
     }
 
-    // Render Table
     function renderTable(data) {
       if (!data || !data.values || data.values.length < 3) {
         return;
@@ -338,10 +328,8 @@
       const values = data.values;
       const table = document.getElementById('score-table');
       
-      // Build header
       let headerHTML = '<thead>';
       
-      // First row - main headers
       headerHTML += '<tr class="header-group">';
       headerHTML += '<th rowspan="2" class="border border-teal-300 px-2 py-2 sticky left-0 bg-teal-600 z-10">ลำดับ</th>';
       headerHTML += '<th rowspan="2" class="border border-teal-300 px-3 py-2 sticky left-12 bg-teal-600 z-10 min-w-32">พื้นที่</th>';
@@ -351,7 +339,7 @@
       headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-orange-500">พฤศจิกายน<br>ตรวจครั้งที่ 4</th>';
       headerHTML += '</tr>';
       
-      // Second row - sub headers (ดึงจาก Google Sheet แถวที่ 2 อัตโนมัติ)
+      // อัปเดตใหม่: ดึงหัวตารางย่อยจากแถวที่ 2 ของ Google Sheet โดยตรง
       headerHTML += '<tr class="sub-header">';
       for (let j = 2; j < 18; j++) {
         let thValue = values[1][j] !== undefined ? values[1][j] : '';
@@ -363,21 +351,17 @@
       table.querySelector('thead')?.remove();
       table.insertAdjacentHTML('afterbegin', headerHTML);
 
-      // Build body
       const tbody = document.getElementById('table-body');
       let bodyHTML = '';
       
-      // Data rows (skip header rows)
       for (let i = 2; i < values.length; i++) {
         const row = values[i];
         if (!row || row.length === 0) continue;
         
-        // Check if this is a summary row (คะแนนรวม, คะแนนเต็ม, คิดเป็น%)
         const firstCell = (row[0] || '').toString().trim();
         const secondCell = (row[1] || '').toString().trim();
         
         if (secondCell.includes('คะแนนรวม') || secondCell.includes('คะแนนเต็ม') || secondCell.includes('คิดเป็น%') || secondCell.includes('%')) {
-          // Summary row styling
           let bgClass = 'bg-gray-100';
           if (secondCell.includes('คะแนนรวม')) bgClass = 'bg-teal-50';
           else if (secondCell.includes('คะแนนเต็ม')) bgClass = 'bg-blue-50';
@@ -391,7 +375,6 @@
             let cellValue = row[j] !== undefined ? row[j] : '';
             let cellClass = 'text-center';
             
-            // Color code percentage cells
             if (secondCell.includes('%') && cellValue !== '') {
               const numVal = parseFloat(cellValue);
               if (!isNaN(numVal)) {
@@ -406,7 +389,6 @@
           }
           bodyHTML += '</tr>';
         } else if (firstCell !== '' || secondCell !== '') {
-          // Regular data row
           bodyHTML += '<tr class="hover:bg-teal-50 transition-colors">';
           bodyHTML += `<td class="border border-gray-300 px-2 py-2 text-center sticky left-0 bg-white z-10">${row[0] || ''}</td>`;
           bodyHTML += `<td class="border border-gray-300 px-3 py-2 sticky left-12 bg-white z-10 font-medium">${row[1] || ''}</td>`;
@@ -415,7 +397,6 @@
             let cellValue = row[j] !== undefined ? row[j] : '';
             let cellClass = 'text-center';
             
-            // Color code score cells
             if (cellValue === 1 || cellValue === '1') cellClass += ' text-green-600 font-semibold';
             else if (cellValue === 0 || cellValue === '0') cellClass += ' text-gray-500';
             else if (cellValue === -1 || cellValue === '-1') cellClass += ' text-orange-600 font-semibold';
@@ -430,7 +411,6 @@
       tbody.innerHTML = bodyHTML;
     }
 
-    // Update Statistics
     function updateStats(data) {
       if (!data || !data.values) return;
       
@@ -440,7 +420,6 @@
       let fair = 0;
       let improve = 0;
       
-      // Count data rows (excluding headers and summary)
       for (let i = 2; i < values.length; i++) {
         const row = values[i];
         if (!row) continue;
@@ -448,18 +427,15 @@
         const firstCell = (row[0] || '').toString().trim();
         const secondCell = (row[1] || '').toString().trim();
         
-        // Skip summary rows
         if (secondCell.includes('คะแนนรวม') || secondCell.includes('คะแนนเต็ม') || secondCell.includes('%')) {
           continue;
         }
         
-        // Count areas
         if (firstCell !== '' && !isNaN(parseInt(firstCell))) {
           totalAreas++;
         }
       }
       
-      // Find percentage row and count evaluations
       for (let i = 2; i < values.length; i++) {
         const row = values[i];
         if (!row) continue;
@@ -485,7 +461,6 @@
       document.getElementById('improve-count').textContent = improve || '0';
     }
 
-    // Update Last Update Time
     function updateLastUpdate(date) {
       const options = {
         year: 'numeric',
