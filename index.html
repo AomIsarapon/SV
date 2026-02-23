@@ -165,10 +165,10 @@
       background_color: '#F5F5F5'
     };
 
-    // Google Apps Script URL (ของ SV)
+    // Google Apps Script URL
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTpxL-Ysbb7QrelcHFiLY0INeOA1wANagWjJH72A5xP1ZYcPtONGkuquFbzspwkSwz/exec';
     
-    // Local Storage Key (ของ SV)
+    // Local Storage Key
     const STORAGE_KEY = '5s_score_data_sv';
 
     // Initialize Element SDK
@@ -351,13 +351,11 @@
       headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-orange-500">พฤศจิกายน<br>ตรวจครั้งที่ 4</th>';
       headerHTML += '</tr>';
       
-      // Second row - sub headers (เหมือนต้นฉบับ SM เป๊ะๆ)
+      // Second row - sub headers (ดึงจาก Google Sheet แถวที่ 2 อัตโนมัติ)
       headerHTML += '<tr class="sub-header">';
-      for (let i = 0; i < 4; i++) {
-        headerHTML += '<th class="border border-gray-300 px-2 py-1">PD</th>';
-        headerHTML += '<th class="border border-gray-300 px-2 py-1">EN</th>';
-        headerHTML += '<th class="border border-gray-300 px-2 py-1">BS</th>';
-        headerHTML += '<th class="border border-gray-300 px-2 py-1">MM</th>';
+      for (let j = 2; j < 18; j++) {
+        let thValue = values[1][j] !== undefined ? values[1][j] : '';
+        headerHTML += `<th class="border border-gray-300 px-2 py-1">${thValue}</th>`;
       }
       headerHTML += '</tr>';
       headerHTML += '</thead>';
@@ -419,9 +417,10 @@
             
             // Color code score cells
             if (cellValue === 1 || cellValue === '1') cellClass += ' text-green-600 font-semibold';
-            else if (cellValue === 0 || cellValue === '0') cellClass += ' text-gray-500';
+            else if (cellValue === 0 || cellValue === '0') cellClass += ' text-red-500';
             else if (cellValue === -1 || cellValue === '-1') cellClass += ' text-orange-600 font-semibold';
             else if (cellValue === -2 || cellValue === '-2') cellClass += ' text-red-600 font-semibold';
+            else if (cellValue === -3 || cellValue === '-3') cellClass += ' text-red-800 font-bold bg-red-50'; // เพิ่มสีสำหรับ -3
             
             bodyHTML += `<td class="border border-gray-300 px-2 py-2 score-cell ${cellClass}">${cellValue}</td>`;
           }
