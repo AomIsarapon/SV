@@ -351,11 +351,13 @@
       headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-orange-500">พฤศจิกายน<br>ตรวจครั้งที่ 4</th>';
       headerHTML += '</tr>';
       
-      // Second row - sub headers (ดึงจาก Google Sheet แถวที่ 2 อัตโนมัติ)
+      // Second row - sub headers (ล็อกชื่อตายตัวตามที่สั่ง)
       headerHTML += '<tr class="sub-header">';
-      for (let j = 2; j < 18; j++) {
-        let thValue = values[1][j] !== undefined ? values[1][j] : '';
-        headerHTML += `<th class="border border-gray-300 px-2 py-1">${thValue}</th>`;
+      for (let i = 0; i < 4; i++) {
+        headerHTML += '<th class="border border-gray-300 px-2 py-1">PD</th>';
+        headerHTML += '<th class="border border-gray-300 px-2 py-1">EN</th>';
+        headerHTML += '<th class="border border-gray-300 px-2 py-1">BS</th>';
+        headerHTML += '<th class="border border-gray-300 px-2 py-1">MM</th>';
       }
       headerHTML += '</tr>';
       headerHTML += '</thead>';
@@ -417,9 +419,9 @@
             
             // Color code score cells
             if (cellValue === 1 || cellValue === '1') cellClass += ' text-green-600 font-semibold';
-            else if (cellValue === 0 || cellValue === '0') cellClass += ' text-orange-500 font-semibold';
-            else if (cellValue === -1 || cellValue === '-1') cellClass += ' text-orange-600 font-semibold';
-            else if (cellValue === -2 || cellValue === '-2') cellClass += ' text-red-600 font-semibold';
+            else if (cellValue === 0 || cellValue === '0') cellClass += ' text-red-500 font-semibold bg-red-20';
+            else if (cellValue === -1 || cellValue === '-1') cellClass += ' text-red-600 font-semibold bg-red-30';
+            else if (cellValue === -2 || cellValue === '-2') cellClass += ' text-red-700 font-semibold bg-red-40';
             else if (cellValue === -3 || cellValue === '-3') cellClass += ' text-red-800 font-bold bg-red-50'; // เพิ่มสีสำหรับ -3
             
             bodyHTML += `<td class="border border-gray-300 px-2 py-2 score-cell ${cellClass}">${cellValue}</td>`;
