@@ -165,10 +165,10 @@
       background_color: '#F5F5F5'
     };
 
-    // Google Apps Script URL (สำหรับแผนก SV)
+    // Google Apps Script URL (ของแผนก SV)
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTpxL-Ysbb7QrelcHFiLY0INeOA1wANagWjJH72A5xP1ZYcPtONGkuquFbzspwkSwz/exec';
     
-    // Local Storage Key (สำหรับแผนก SV)
+    // Local Storage Key (ของแผนก SV)
     const STORAGE_KEY = '5s_score_data_sv';
 
     // Initialize Element SDK
@@ -351,7 +351,7 @@
       headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-orange-500">พฤศจิกายน<br>ตรวจครั้งที่ 4</th>';
       headerHTML += '</tr>';
       
-      // Second row - sub headers (อัปเกรดให้ดึงจาก Sheet แถวที่ 2 อัตโนมัติ)
+      // Second row - sub headers (ดึงจาก Sheet แถวที่ 2 อัตโนมัติเหมือน SM ตัวล่าสุด)
       headerHTML += '<tr class="sub-header">';
       for (let j = 2; j < 18; j++) {
         let thValue = values[1][j] !== undefined ? values[1][j] : '';
