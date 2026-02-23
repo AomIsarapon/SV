@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="th" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>โปรแกรมคะแนน 5ส.</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    * { font-family: 'Kanit', sans-serif; }
+    .gradient-bg {
+      background: linear-gradient(135deg, #E0F7FA 0%, #E8F5E9 50%, #FFF8E1 100%);
+    }
+    .card-shadow {
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    .floating {
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .pulse-btn {
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.4); }
+      50% { box-shadow: 0 0 0 15px rgba(76, 175, 80, 0); }
+    }
+    .table-container {
+      overflow-x: auto;
+    }
+    table th, table td {
+      white-space: nowrap;
+    }
+    .excellent { background: linear-gradient(135deg, #4CAF50, #81C784); color: white; }
+    .fair { background: linear-gradient(135deg, #FF9800, #FFB74D); color: white; }
+    .improve { background: linear-gradient(135deg, #F44336, #E57373); color: white; }
+    .score-cell { min-width: 40px; text-align: center; }
+    .header-group { background: linear-gradient(135deg, #26A69A, #4DB6AC); color: white; }
+    .sub-header { background: #B2DFDB; color: #00695C; font-size: 0.75rem; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full overflow-auto">
+  <div id="app" class="min-h-full"><div id="cover-page" class="min-h-full gradient-bg flex items-center justify-center p-4">
+    <div class="text-center max-w-2xl mx-auto"><div class="mb-8"><span class="text-6xl floating inline-block" style="animation-delay: 0s;">🏆</span> <span class="text-5xl floating inline-block mx-4" style="animation-delay: 0.5s;">📊</span> <span class="text-6xl floating inline-block" style="animation-delay: 1s;">✨</span>
+     </div><div class="bg-white/90 backdrop-blur-sm rounded-3xl p-8 md:p-12 card-shadow">
+      <div class="mb-6"><span class="inline-block bg-gradient-to-r from-teal-400 to-green-400 text-white px-4 py-1 rounded-full text-sm font-medium mb-4"> 🎯 ระบบประเมินผล </span>
+      </div>
+      <h1 id="program-title" class="text-2xl md:text-4xl font-bold text-gray-800 mb-4 leading-tight">โปรแกรมแสดง และบันทึกคะแนน<br><span class="text-teal-600">กิจกรรม 5ส.</span></h1>
+      <p id="department-name" class="text-xl md:text-2xl text-teal-700 font-semibold mb-8">📁 แผนก SV</p>
+      <div class="flex flex-wrap justify-center gap-4 mb-8">
+       <div class="bg-blue-50 px-4 py-2 rounded-xl"><span class="text-2xl">📋</span>
+        <p class="text-sm text-blue-700 font-medium">สะสาง</p>
+       </div>
+       <div class="bg-green-50 px-4 py-2 rounded-xl"><span class="text-2xl">🗂️</span>
+        <p class="text-sm text-green-700 font-medium">สะดวก</p>
+       </div>
+       <div class="bg-yellow-50 px-4 py-2 rounded-xl"><span class="text-2xl">✨</span>
+        <p class="text-sm text-yellow-700 font-medium">สะอาด</p>
+       </div>
+       <div class="bg-purple-50 px-4 py-2 rounded-xl"><span class="text-2xl">💪</span>
+        <p class="text-sm text-purple-700 font-medium">สุขลักษณะ</p>
+       </div>
+       <div class="bg-pink-50 px-4 py-2 rounded-xl"><span class="text-2xl">🎯</span>
+        <p class="text-sm text-pink-700 font-medium">สร้างนิสัย</p>
+       </div>
+      </div><button onclick="showDashboard()" class="pulse-btn bg-gradient-to-r from-teal-500 to-green-500 hover:from-teal-600 hover:to-green-600 text-white font-semibold py-4 px-10 rounded-2xl text-lg transition-all duration-300 transform hover:scale-105 shadow-lg"> 🚀 เริ่มใช้งาน </button>
+      <p class="mt-6 text-gray-500 text-sm">💾 รองรับการบันทึกข้อมูลถาวร | 🔄 อัพเดทแบบ Real-time</p>
+     </div><div class="mt-8 flex justify-center gap-2"><span class="w-3 h-3 bg-teal-400 rounded-full"></span> <span class="w-3 h-3 bg-green-400 rounded-full"></span> <span class="w-3 h-3 bg-yellow-400 rounded-full"></span>
+     </div>
+    </div>
+   </div><div id="dashboard-page" class="min-h-full bg-gray-50 hidden"><header class="bg-gradient-to-r from-teal-600 to-green-600 text-white py-4 px-4 shadow-lg sticky top-0 z-50">
+     <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3"><button onclick="showCover()" class="bg-white/20 hover:bg-white/30 p-2 rounded-lg transition-all">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+        </svg></button>
+       <div>
+        <h1 class="text-xl font-bold">📊 Dashboard คะแนน 5ส.</h1>
+        <p class="text-teal-100 text-sm">แผนก SV</p>
+       </div>
+      </div>
+      <div class="flex flex-wrap gap-2"><button onclick="fetchData()" class="bg-white text-teal-700 hover:bg-teal-50 font-semibold py-2 px-4 rounded-xl transition-all flex items-center gap-2 shadow-md"> 🔄 เรียกดูข้อมูลจาก Google Sheet </button> <button onclick="clearLocalStorage()" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-xl transition-all flex items-center gap-2 shadow-md"> 🗑️ ล้างข้อมูล Local </button>
+      </div>
+     </div>
+    </header><div class="max-w-7xl mx-auto px-4 py-6">
+     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-teal-500">
+       <p class="text-gray-500 text-sm">📍 จำนวนพื้นที่</p>
+       <p id="total-areas" class="text-3xl font-bold text-teal-600">-</p>
+      </div>
+      <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-green-500">
+       <p class="text-gray-500 text-sm">⭐ ดีเยี่ยม (90-100%)</p>
+       <p id="excellent-count" class="text-3xl font-bold text-green-600">-</p>
+      </div>
+      <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-yellow-500">
+       <p class="text-gray-500 text-sm">👍 พอใช้ (80-89%)</p>
+       <p id="fair-count" class="text-3xl font-bold text-yellow-600">-</p>
+      </div>
+      <div class="bg-white rounded-2xl p-4 shadow-md border-l-4 border-red-500">
+       <p class="text-gray-500 text-sm">⚠️ ปรับปรุง (&lt;80%)</p>
+       <p id="improve-count" class="text-3xl font-bold text-red-600">-</p>
+      </div>
+     </div><div class="bg-white rounded-xl p-4 mb-6 shadow-md">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+       <div class="flex items-center gap-2"><span class="text-2xl">⏰</span>
+        <div>
+         <p class="text-sm text-gray-500">อัพเดทล่าสุด</p>
+         <p id="last-update" class="font-semibold text-gray-700">-</p>
+        </div>
+       </div>
+       <div class="flex items-center gap-2"><span class="text-2xl">💾</span>
+        <div>
+         <p class="text-sm text-gray-500">สถานะข้อมูล</p>
+         <p id="data-status" class="font-semibold text-gray-700">รอดึงข้อมูล</p>
+        </div>
+       </div>
+      </div>
+     </div><div class="bg-white rounded-xl p-4 mb-6 shadow-md">
+      <h3 class="font-semibold text-gray-700 mb-3">📌 เกณฑ์การประเมิน</h3>
+      <div class="flex flex-wrap gap-4">
+       <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-green-500"></span> <span class="text-sm">90-100% = ดีเยี่ยม ⭐</span>
+       </div>
+       <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-yellow-500"></span> <span class="text-sm">80-89% = พอใช้ 👍</span>
+       </div>
+       <div class="flex items-center gap-2"><span class="w-4 h-4 rounded bg-red-500"></span> <span class="text-sm">ต่ำกว่า 80% = ปรับปรุง ⚠️</span>
+       </div>
+      </div>
+     </div><div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+      <div class="bg-gradient-to-r from-teal-500 to-green-500 px-6 py-4">
+       <h2 class="text-white font-bold text-lg flex items-center gap-2">📋 ตารางคะแนนกิจกรรม 5ส.</h2>
+      </div>
+      <div class="table-container p-4">
+       <table id="score-table" class="w-full border-collapse text-sm">
+        <thead></thead>
+        <tbody id="table-body">
+         <tr>
+          <td colspan="20" class="text-center py-12 text-gray-400">
+           <div class="text-4xl mb-4">
+            📭
+           </div><p>กดปุ่ม "เรียกดูข้อมูลจาก Google Sheet" เพื่อโหลดข้อมูล</p></td>
+         </tr>
+        </tbody>
+       </table>
+      </div>
+     </div><div class="text-center py-6 text-gray-500 text-sm">
+      <p>💻 พัฒนาโดย Canva Code | 📅 ปี 2025</p>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Default Configuration
+    const defaultConfig = {
+      department_name: 'แผนก SV',
+      program_title: 'โปรแกรมแสดง และบันทึกคะแนนกิจกรรม 5ส.',
+      primary_color: '#26A69A',
+      secondary_color: '#4DB6AC',
+      background_color: '#F5F5F5'
+    };
+
+    // Google Apps Script URL
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyTpxL-Ysbb7QrelcHFiLY0INeOA1wANagWjJH72A5xP1ZYcPtONGkuquFbzspwkSwz/exec';
+    
+    // Local Storage Key
+    const STORAGE_KEY = '5s_score_data_sv';
+
+    // Initialize Element SDK
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange: async (config) => {
+          document.getElementById('department-name').innerHTML = `📁 ${config.department_name || defaultConfig.department_name}`;
+          const titleParts = (config.program_title || defaultConfig.program_title).split('5ส.');
+          document.getElementById('program-title').innerHTML = `${titleParts[0]}<br><span class="text-teal-600">กิจกรรม 5ส.</span>`;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['department_name', config.department_name || defaultConfig.department_name],
+          ['program_title', config.program_title || defaultConfig.program_title]
+        ])
+      });
+    }
+
+    // Page Navigation
+    function showDashboard() {
+      document.getElementById('cover-page').classList.add('hidden');
+      document.getElementById('dashboard-page').classList.remove('hidden');
+      loadFromLocalStorage();
+    }
+
+    function showCover() {
+      document.getElementById('dashboard-page').classList.add('hidden');
+      document.getElementById('cover-page').classList.remove('hidden');
+    }
+
+    // JSONP Callback
+    window.handleSheetData = function(data) {
+      if (data.error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: data.error,
+          confirmButtonColor: '#26A69A'
+        });
+        return;
+      }
+      
+      // Save to Local Storage
+      const storageData = {
+        data: data,
+        timestamp: new Date().toISOString()
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(storageData));
+      
+      // Render data
+      renderTable(data);
+      updateStats(data);
+      updateLastUpdate(new Date());
+      document.getElementById('data-status').textContent = 'ข้อมูลจาก Google Sheet';
+      
+      Swal.fire({
+        icon: 'success',
+        title: 'สำเร็จ!',
+        text: 'ดึงและบันทึกข้อมูลเรียบร้อยแล้ว',
+        confirmButtonColor: '#26A69A',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    };
+
+    // Fetch Data from Google Sheet
+    function fetchData() {
+      Swal.fire({
+        title: 'กำลังโหลดข้อมูล...',
+        html: '<div class="text-4xl mb-4">🔄</div><p>กรุณารอสักครู่</p>',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
+      // Create JSONP script
+      const script = document.createElement('script');
+      script.src = APPS_SCRIPT_URL + '?callback=handleSheetData&t=' + Date.now();
+      script.onerror = function() {
+        Swal.fire({
+          icon: 'error',
+          title: 'เกิดข้อผิดพลาด',
+          text: 'ไม่สามารถเชื่อมต่อ Google Sheet ได้',
+          confirmButtonColor: '#26A69A'
+        });
+      };
+      document.body.appendChild(script);
+      
+      // Clean up script after load
+      setTimeout(() => {
+        if (script.parentNode) {
+          script.parentNode.removeChild(script);
+        }
+      }, 10000);
+    }
+
+    // Load from Local Storage
+    function loadFromLocalStorage() {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const { data, timestamp } = JSON.parse(stored);
+          renderTable(data);
+          updateStats(data);
+          updateLastUpdate(new Date(timestamp));
+          document.getElementById('data-status').textContent = 'ข้อมูลจาก Local Storage';
+        } catch (e) {
+          console.error('Error loading from localStorage:', e);
+        }
+      }
+    }
+
+    // Clear Local Storage
+    function clearLocalStorage() {
+      Swal.fire({
+        title: 'ยืนยันการล้างข้อมูล?',
+        text: 'ข้อมูลที่บันทึกไว้ใน Local Storage จะถูกลบ',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#F44336',
+        cancelButtonColor: '#9E9E9E',
+        confirmButtonText: 'ใช่, ล้างข้อมูล',
+        cancelButtonText: 'ยกเลิก'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          localStorage.removeItem(STORAGE_KEY);
+          document.getElementById('table-body').innerHTML = `
+            <tr>
+              <td colspan="20" class="text-center py-12 text-gray-400">
+                <div class="text-4xl mb-4">📭</div>
+                <p>กดปุ่ม "เรียกดูข้อมูลจาก Google Sheet" เพื่อโหลดข้อมูล</p>
+              </td>
+            </tr>
+          `;
+          document.getElementById('total-areas').textContent = '-';
+          document.getElementById('excellent-count').textContent = '-';
+          document.getElementById('fair-count').textContent = '-';
+          document.getElementById('improve-count').textContent = '-';
+          document.getElementById('last-update').textContent = '-';
+          document.getElementById('data-status').textContent = 'รอดึงข้อมูล';
+          
+          Swal.fire({
+            icon: 'success',
+            title: 'ล้างข้อมูลแล้ว',
+            confirmButtonColor: '#26A69A',
+            timer: 1500,
+            showConfirmButton: false
+          });
+        }
+      });
+    }
+
+    // Render Table
+    function renderTable(data) {
+      if (!data || !data.values || data.values.length < 3) {
+        return;
+      }
+
+      const values = data.values;
+      const table = document.getElementById('score-table');
+      
+      // Build header
+      let headerHTML = '<thead>';
+      
+      // First row - main headers
+      headerHTML += '<tr class="header-group">';
+      headerHTML += '<th rowspan="2" class="border border-teal-300 px-2 py-2 sticky left-0 bg-teal-600 z-10">ลำดับ</th>';
+      headerHTML += '<th rowspan="2" class="border border-teal-300 px-3 py-2 sticky left-12 bg-teal-600 z-10 min-w-32">พื้นที่</th>';
+      headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-blue-500">มีนาคม<br>ตรวจครั้งที่ 1</th>';
+      headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-green-500">มิถุนายน<br>ตรวจครั้งที่ 2</th>';
+      headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-yellow-500">กันยายน<br>ตรวจครั้งที่ 3</th>';
+      headerHTML += '<th colspan="4" class="border border-teal-300 px-2 py-2 bg-orange-500">พฤศจิกายน<br>ตรวจครั้งที่ 4</th>';
+      headerHTML += '</tr>';
+      
+      // Second row - sub headers (ดึงจาก Google Sheet แถวที่ 2 อัตโนมัติ)
+      headerHTML += '<tr class="sub-header">';
+      for (let j = 2; j < 18; j++) {
+        let thValue = values[1][j] !== undefined ? values[1][j] : '';
+        headerHTML += `<th class="border border-gray-300 px-2 py-1">${thValue}</th>`;
+      }
+      headerHTML += '</tr>';
+      headerHTML += '</thead>';
+      
+      table.querySelector('thead')?.remove();
+      table.insertAdjacentHTML('afterbegin', headerHTML);
+
+      // Build body
+      const tbody = document.getElementById('table-body');
+      let bodyHTML = '';
+      
+      // Data rows (skip header rows)
+      for (let i = 2; i < values.length; i++) {
+        const row = values[i];
+        if (!row || row.length === 0) continue;
+        
+        // Check if this is a summary row (คะแนนรวม, คะแนนเต็ม, คิดเป็น%)
+        const firstCell = (row[0] || '').toString().trim();
+        const secondCell = (row[1] || '').toString().trim();
+        
+        if (secondCell.includes('คะแนนรวม') || secondCell.includes('คะแนนเต็ม') || secondCell.includes('คิดเป็น%') || secondCell.includes('%')) {
+          // Summary row styling
+          let bgClass = 'bg-gray-100';
+          if (secondCell.includes('คะแนนรวม')) bgClass = 'bg-teal-50';
+          else if (secondCell.includes('คะแนนเต็ม')) bgClass = 'bg-blue-50';
+          else if (secondCell.includes('%')) bgClass = 'bg-yellow-50';
+          
+          bodyHTML += `<tr class="${bgClass} font-semibold">`;
+          bodyHTML += `<td class="border border-gray-300 px-2 py-2 text-center sticky left-0 ${bgClass} z-10">${row[0] || ''}</td>`;
+          bodyHTML += `<td class="border border-gray-300 px-3 py-2 sticky left-12 ${bgClass} z-10">${row[1] || ''}</td>`;
+          
+          for (let j = 2; j < 18; j++) {
+            let cellValue = row[j] !== undefined ? row[j] : '';
+            let cellClass = 'text-center';
+            
+            // Color code percentage cells
+            if (secondCell.includes('%') && cellValue !== '') {
+              const numVal = parseFloat(cellValue);
+              if (!isNaN(numVal)) {
+                if (numVal >= 90) cellClass += ' excellent text-white font-bold';
+                else if (numVal >= 80) cellClass += ' fair text-white font-bold';
+                else cellClass += ' improve text-white font-bold';
+                cellValue = numVal.toFixed(0) + '%';
+              }
+            }
+            
+            bodyHTML += `<td class="border border-gray-300 px-2 py-2 score-cell ${cellClass}">${cellValue}</td>`;
+          }
+          bodyHTML += '</tr>';
+        } else if (firstCell !== '' || secondCell !== '') {
+          // Regular data row
+          bodyHTML += '<tr class="hover:bg-teal-50 transition-colors">';
+          bodyHTML += `<td class="border border-gray-300 px-2 py-2 text-center sticky left-0 bg-white z-10">${row[0] || ''}</td>`;
+          bodyHTML += `<td class="border border-gray-300 px-3 py-2 sticky left-12 bg-white z-10 font-medium">${row[1] || ''}</td>`;
+          
+          for (let j = 2; j < 18; j++) {
+            let cellValue = row[j] !== undefined ? row[j] : '';
+            let cellClass = 'text-center';
+            
+            // Color code score cells
+            if (cellValue === 1 || cellValue === '1') cellClass += ' text-green-600 font-semibold';
+            else if (cellValue === 0 || cellValue === '0') cellClass += ' text-gray-500';
+            else if (cellValue === -1 || cellValue === '-1') cellClass += ' text-orange-600 font-semibold';
+            else if (cellValue === -2 || cellValue === '-2') cellClass += ' text-red-600 font-semibold';
+            
+            bodyHTML += `<td class="border border-gray-300 px-2 py-2 score-cell ${cellClass}">${cellValue}</td>`;
+          }
+          bodyHTML += '</tr>';
+        }
+      }
+      
+      tbody.innerHTML = bodyHTML;
+    }
+
+    // Update Statistics
+    function updateStats(data) {
+      if (!data || !data.values) return;
+      
+      const values = data.values;
+      let totalAreas = 0;
+      let excellent = 0;
+      let fair = 0;
+      let improve = 0;
+      
+      // Count data rows (excluding headers and summary)
+      for (let i = 2; i < values.length; i++) {
+        const row = values[i];
+        if (!row) continue;
+        
+        const firstCell = (row[0] || '').toString().trim();
+        const secondCell = (row[1] || '').toString().trim();
+        
+        // Skip summary rows
+        if (secondCell.includes('คะแนนรวม') || secondCell.includes('คะแนนเต็ม') || secondCell.includes('%')) {
+          continue;
+        }
+        
+        // Count areas
+        if (firstCell !== '' && !isNaN(parseInt(firstCell))) {
+          totalAreas++;
+        }
+      }
+      
+      // Find percentage row and count evaluations
+      for (let i = 2; i < values.length; i++) {
+        const row = values[i];
+        if (!row) continue;
+        
+        const secondCell = (row[1] || '').toString().trim();
+        
+        if (secondCell.includes('%')) {
+          for (let j = 2; j < row.length; j++) {
+            const val = parseFloat(row[j]);
+            if (!isNaN(val)) {
+              if (val >= 90) excellent++;
+              else if (val >= 80) fair++;
+              else improve++;
+            }
+          }
+          break;
+        }
+      }
+      
+      document.getElementById('total-areas').textContent = totalAreas || '-';
+      document.getElementById('excellent-count').textContent = excellent || '0';
+      document.getElementById('fair-count').textContent = fair || '0';
+      document.getElementById('improve-count').textContent = improve || '0';
+    }
+
+    // Update Last Update Time
+    function updateLastUpdate(date) {
+      const options = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+      };
+      document.getElementById('last-update').textContent = date.toLocaleDateString('th-TH', options);
+    }
+  </script>
+ </body>
+</html>
